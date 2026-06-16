@@ -1,8 +1,22 @@
-const mongoose = require("mongoose");
+// models/Usarios.js
+// Não usa mongoose nem conexão própria: recebe o "db" já conectado
+// (vindo de req.app.locals.db, definido no server.js)
 
-const UsuarioSchema = new mongoose.Schema({
-  email: { type: String, required: true, unique: true },
-  senha: { type: String, required: true }
-});
+function usuariosCollection(db) {
+  return db.collection("usuarios");
+}
 
-module.exports = mongoose.model("Usuario", UsuarioSchema);
+async function buscarUsuarioPorEmail(db, email) {
+  return usuariosCollection(db).findOne({ email });
+}
+
+async function criarUsuario(db, { email, senha }) {
+  const resultado = await usuariosCollection(db).insertOne({ email, senha });
+  return resultado;
+}
+
+module.exports = {
+  usuariosCollection,
+  buscarUsuarioPorEmail,
+  criarUsuario
+};
