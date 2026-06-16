@@ -17,7 +17,7 @@ function App() {
   useEffect(() => {
     if (isLoggedIn) {
       // Busca os serviços das nossas rotas
-      api.get('/servicos')
+      api.get('/api/servicos')
         .then(res => {
           setServicos(res.data);
           if(res.data.length > 0) setServicoSelecionado(res.data[0].nome);
@@ -25,7 +25,7 @@ function App() {
         .catch(err => console.error("Erro ao carregar serviços:", err));
 
       // Busca os agendamentos das nossas rotas
-      api.get('/agendamentos')
+      api.get('/api/agendamentos')
         .then(res => setAgendamentos(res.data))
         .catch(err => console.error("Erro ao carregar agendamentos:", err));
     }
