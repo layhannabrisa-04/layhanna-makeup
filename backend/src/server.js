@@ -1,17 +1,21 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const { MongoClient } = require("mongodb"); // 👈 Trocado Mongoose pelo MongoClient nativo
+const { MongoClient } = require("mongodb");
 
 const app = express();
 
-app.use(cors());
+// 💡 CONFIGURAÇÃO DE CORS DO RENDER
+// Libera explicitamente o seu link do frontend para fazer requisições na API
+app.use(cors({
+  origin: "https://layhannamakeup.onrender.com",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
 app.use(express.json());
 
 // 🔌 CONEXÃO COM O BANCO DE DADOS (Usando o Driver Nativo)
-// 🔌 CONEXÃO COM O BANCO DE DADOS
-// String chumbada direto no código para evitar problemas com o .env
-// Pega a URL do painel do Render, se não achar, usa a local
 const dbURI = process.env.MONGO_URI;
 let db; 
 
@@ -19,7 +23,7 @@ MongoClient.connect(dbURI)
   .then((client) => {
     console.log("MongoDB Nativo conectado com sucesso!");
     db = client.db("layhanna_makeup"); 
-    app.locals.db = db; 
+    app.locals.db = db; // Disponibiliza o banco para os arquivos de rotas
   })
   .catch((erro) => {
     console.log("Erro de conexão com o MongoDB Nativo:", erro);
@@ -35,7 +39,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/servicos", servicoRoutes);
 app.use("/api/agendamentos", agendamentoRoutes);
 
-// Rota de teste
+// Rota de teste raiz
 app.get("/", (req, res) => {
   res.json({ mensagem: "API Layhanna Makeup funcionando com MongoDB Nativo!" });
 });
