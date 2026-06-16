@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from './services/api';
-import Login from './pages/Login';
+import Login from "./pages/login"; // Use 'login' em minúsculo para bater com o nome da pasta!
 import './styles.css'; 
 
 function App() {
