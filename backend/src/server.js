@@ -5,12 +5,27 @@ const { MongoClient } = require("mongodb");
 
 const app = express();
 
-// 💡 CONFIGURAÇÃO DE CORS DO RENDER
-// Libera explicitamente o seu link do frontend para fazer requisições na API
+// 💡 CONFIGURAÇÃO DE CORS DO RENDER (Atualizado com os links exatos)
+const allowedOrigins = [
+  "https://layhannamakeup.onrender.com",   // Seu link real sem hífen
+  "https://layhanna-makeup.onrender.com",  // Versão com hífen (caso use)
+  "http://localhost:5173",                 // Para você conseguir testar no seu PC também
+];
+
 app.use(cors({
-  origin: "https://layhannamakeup.onrender.com",
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"]
+  origin: function (origin, callback) {
+    // Permite requisições sem origem (como aplicativos mobile ou ferramentas de teste)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error("Bloqueado pelo CORS: Origem não permitida."));
+    }
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true
 }));
 
 app.use(express.json());
