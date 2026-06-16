@@ -1,14 +1,21 @@
 import { useState, useEffect } from 'react';
 import api from './services/api';
-import Login from "./pages/login"; // Use 'login' em minúsculo para bater com o nome da pasta!
-import './styles.css'; 
+import Login from "./pages/login";
+import './styles.css';
+
+// Fotos reais dos serviços (cycling por índice)
+import makeRosto1 from './assets/makerosto1.jpeg';
+import makeRosto2 from './assets/makerosto2.jpeg';
+import makeRosto3 from './assets/makerosto3.jpeg';
+import makeRosto4 from './assets/makerosto4.jpeg';
+
+const servicePhotos = [makeRosto1, makeRosto2, makeRosto3, makeRosto4];
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [servicos, setServicos] = useState([]);
   const [agendamentos, setAgendamentos] = useState([]);
-  
-  // Estados para o formulário de novo agendamento
+
   const [clienteNome, setClienteNome] = useState('');
   const [servicoSelecionado, setServicoSelecionado] = useState('');
   const [horarioInicio, setHorarioInicio] = useState('');
@@ -16,27 +23,24 @@ function App() {
 
   useEffect(() => {
     if (isLoggedIn) {
-      // Busca os serviços das nossas rotas
       api.get('/api/servicos')
         .then(res => {
           setServicos(res.data);
-          if(res.data.length > 0) setServicoSelecionado(res.data[0].nome);
+          if (res.data.length > 0) setServicoSelecionado(res.data[0].nome);
         })
         .catch(err => console.error("Erro ao carregar serviços:", err));
 
-      // Busca os agendamentos das nossas rotas
       api.get('/api/agendamentos')
         .then(res => setAgendamentos(res.data))
         .catch(err => console.error("Erro ao carregar agendamentos:", err));
     }
   }, [isLoggedIn]);
 
-  // Função para adicionar novo agendamento na tela na hora!
   const handleNovoAgendamento = (e) => {
     e.preventDefault();
-    
+
     const novo = {
-      _id: Math.random().toString(), // Gera um ID temporário
+      _id: Math.random().toString(),
       clienteNome,
       servico: { nome: servicoSelecionado },
       horarioInicio,
@@ -44,10 +48,7 @@ function App() {
       status: 'Confirmado'
     };
 
-    // Atualiza a lista na tela instantaneamente
     setAgendamentos([...agendamentos, novo]);
-    
-    // Limpa os campos do formulário
     setClienteNome('');
     setHorarioInicio('');
     setHorarioFim('');
@@ -59,85 +60,141 @@ function App() {
   }
 
   return (
-    <div className="dashboard-container" style={{ display: 'flex', fontFamily: 'sans-serif', backgroundColor: '#faf6f0', minHeight: '100vh' }}>
-      
-      {/* MENU LATERAL */}
-      <div style={{ width: '250px', backgroundColor: '#fff', padding: '20px', borderRight: '1px solid #eee' }}>
-        <h2 style={{ color: '#ab7a5f' }}>Layhanna.Makeup_</h2>
-        <p style={{ fontSize: '14px', color: '#888' }}>Painel de Controle</p>
-        <hr style={{ border: 'none', borderTop: '1px solid #eee', margin: '20px 0' }} />
-        <p style={{ fontWeight: 'bold', color: '#ab7a5f' }}>📅 Dashboard</p>
-      </div>
+    <div className="dashboard-container">
 
-      {/* CONTEÚDO PRINCIPAL */}
-      <div style={{ flex: 1, padding: '40px' }}>
-        <div style={{ marginBottom: '30px' }}>
-          <h1>Olá, Layhanna! ♡</h1>
-          <p style={{ color: '#666' }}>Que seu dia seja tão lindo quanto a sua make.</p>
+      {/* ── SIDEBAR ─────────────────────────────────────── */}
+      <aside className="sidebar">
+        <div className="sidebar-logo">
+          <h2>Layhanna.Makeup_</h2>
+          <p>Painel de Controle</p>
         </div>
 
-        {/* FORMULÁRIO DE NOVO AGENDAMENTO */}
-        <div style={{ backgroundColor: '#fff', padding: '25px', borderRadius: '8px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', marginBottom: '40px' }}>
-          <h3 style={{ color: '#ab7a5f', marginTop: 0, marginBottom: '20px' }}>✨ Novo Agendamento</h3>
-          <form onSubmit={handleNovoAgendamento} style={{ display: 'flex', gap: '15px', flexWrap: 'wrap', alignItems: 'flex-end' }}>
-            <div>
-              <label style={{ fontSize: '14px' }}>Cliente:</label><br />
-              <input type="text" value={clienteNome} onChange={e => setClienteNome(e.target.value)} required style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ddd', width: '200px' }} />
+        <hr className="sidebar-divider" />
+
+        <div className="sidebar-nav-item">
+          📅 Dashboard
+        </div>
+
+        <div className="sidebar-footer">
+          Feito com <span>♡</span> para<br />
+          a arte de embelezar
+        </div>
+      </aside>
+
+      {/* ── CONTEÚDO PRINCIPAL ──────────────────────────── */}
+      <main className="main-content">
+
+        {/* Cabeçalho */}
+        <div className="page-header">
+          <h1>Olá, <span>Layhanna!</span> ♡</h1>
+          <p>Que seu dia seja tão lindo quanto a sua make.</p>
+        </div>
+
+        {/* ── FORMULÁRIO DE NOVO AGENDAMENTO ────────────── */}
+        <div className="form-card">
+          <h3 className="section-title">✨ Novo Agendamento</h3>
+
+          <form className="appointment-form" onSubmit={handleNovoAgendamento}>
+            <div className="form-group">
+              <label>Cliente</label>
+              <input
+                type="text"
+                value={clienteNome}
+                onChange={e => setClienteNome(e.target.value)}
+                placeholder="Nome da cliente"
+                required
+              />
             </div>
-            <div>
-              <label style={{ fontSize: '14px' }}>Serviço:</label><br />
-              <select value={servicoSelecionado} onChange={e => setServicoSelecionado(e.target.value)} style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ddd', width: '180px' }}>
-                {servicos.map(s => <option key={s._id} value={s.nome}>{s.nome}</option>)}
+
+            <div className="form-group">
+              <label>Serviço</label>
+              <select
+                value={servicoSelecionado}
+                onChange={e => setServicoSelecionado(e.target.value)}
+              >
+                {servicos.map(s => (
+                  <option key={s._id} value={s.nome}>{s.nome}</option>
+                ))}
               </select>
             </div>
-            <div>
-              <label style={{ fontSize: '14px' }}>Início:</label><br />
-              <input type="time" value={horarioInicio} onChange={e => setHorarioInicio(e.target.value)} required style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ddd' }} />
+
+            <div className="form-group">
+              <label>Início</label>
+              <input
+                type="time"
+                value={horarioInicio}
+                onChange={e => setHorarioInicio(e.target.value)}
+                required
+              />
             </div>
-            <div>
-              <label style={{ fontSize: '14px' }}>Fim:</label><br />
-              <input type="time" value={horarioFim} onChange={e => setHorarioFim(e.target.value)} required style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ddd' }} />
+
+            <div className="form-group">
+              <label>Fim</label>
+              <input
+                type="time"
+                value={horarioFim}
+                onChange={e => setHorarioFim(e.target.value)}
+                required
+              />
             </div>
-            <button type="submit" style={{ padding: '10px 20px', backgroundColor: '#e2b49a', color: 'white', border: 'none', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer' }}>
+
+            <button type="submit" className="btn-primary">
               Agendar Cliente
             </button>
           </form>
         </div>
 
-        {/* MEUS SERVIÇOS */}
-        <h3 style={{ color: '#ab7a5f' }}>Meus Serviços</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 150px))', gap: '20px', marginBottom: '40px' }}>
-          {servicos.map(servico => (
-            <div key={servico._id} style={{ backgroundColor: '#fff', padding: '20px', borderRadius: '8px', textAlign: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
-              <div style={{ fontSize: '30px', marginBottom: '10px' }}>💄</div>
-              <h4 style={{ margin: '10px 0 5px 0' }}>{servico.nome}</h4>
-              <p style={{ color: '#ab7a5f', fontWeight: 'bold', margin: 0 }}>R$ {servico.preco},00</p>
+        {/* ── MEUS SERVIÇOS ─────────────────────────────── */}
+        <h3 className="section-title">💄 Meus Serviços</h3>
+
+        <div className="services-grid">
+          {servicos.map((servico, index) => (
+            <div key={servico._id} className="service-card">
+              {/* Foto real no lugar do emoji */}
+              <div className="service-card-photo">
+                <img
+                  src={servicePhotos[index % servicePhotos.length]}
+                  alt={servico.nome}
+                />
+              </div>
+
+              <div className="service-card-body">
+                <h4>{servico.nome}</h4>
+                <p className="price">R$ {servico.preco},00</p>
+              </div>
             </div>
           ))}
         </div>
 
-        {/* PRÓXIMOS ATENDIMENTOS */}
-        <h3 style={{ color: '#ab7a5f' }}>Próximos Atendimentos</h3>
-        <div style={{ backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
-          {agendamentos.map(agenda => (
-            <div key={agenda._id} style={{ display: 'flex', justifyContent: 'space-between', padding: '15px 20px', borderBottom: '1px solid #eee', alignItems: 'center' }}>
-              <div>
-                <p style={{ margin: 0, fontWeight: 'bold' }}>{agenda.clienteNome}</p>
-                <p style={{ margin: 0, fontSize: '13px', color: '#777' }}>{agenda.servico?.nome}</p>
-              </div>
-              <div style={{ color: '#555' }}>
-                🕒 {agenda.horarioInicio} - {agenda.horarioFim}
-              </div>
-              <div>
-                <span style={{ backgroundColor: '#e8f5e9', color: '#2e7d32', padding: '5px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold' }}>
+        {/* ── PRÓXIMOS ATENDIMENTOS ─────────────────────── */}
+        <h3 className="section-title">🕒 Próximos Atendimentos</h3>
+
+        <div className="appointments-list">
+          {agendamentos.length === 0 ? (
+            <p className="appointments-empty">
+              Nenhum atendimento agendado ainda. ♡
+            </p>
+          ) : (
+            agendamentos.map(agenda => (
+              <div key={agenda._id} className="appointment-row">
+                <div>
+                  <p className="appt-client-name">{agenda.clienteNome}</p>
+                  <p className="appt-service-name">{agenda.servico?.nome}</p>
+                </div>
+
+                <p className="appt-time">
+                  {agenda.horarioInicio} — {agenda.horarioFim}
+                </p>
+
+                <span className="status-badge">
                   {agenda.status}
                 </span>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
 
-      </div>
+      </main>
     </div>
   );
 }
