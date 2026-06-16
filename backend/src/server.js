@@ -12,22 +12,14 @@ const allowedOrigins = [
   "http://localhost:5173",                 // Para você conseguir testar no seu PC também
 ];
 
+// 💡 CONFIGURAÇÃO DE CORS UNIVERSAL (Abre as portas para o front-end sem frescura)
 app.use(cors({
-  origin: function (origin, callback) {
-    // Permite requisições sem origem (como aplicativos mobile ou ferramentas de teste)
-    if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error("Bloqueado pelo CORS: Origem não permitida."));
-    }
-  },
+  origin: "*", // O asterisco permite que QUALQUER site acesse sua API
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true
+  allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
+// Tem que ser ANTES do express.json e das rotas!
 app.use(express.json());
 
 // 🔌 CONEXÃO COM O BANCO DE DADOS (Usando o Driver Nativo)
