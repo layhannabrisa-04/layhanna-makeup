@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import api from '../../services/api';
 
 export default function Login({ onLoginSuccess }) {
@@ -9,8 +9,8 @@ export default function Login({ onLoginSuccess }) {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      // Faz o POST para o authRoutes.js do seu backend
-      const response = await api.post('/auth/login', { email, senha });
+      // AJUSTE: Adicionado o /api antes de /auth/login
+      const response = await api.post('/api/auth/login', { email, senha });
       alert(response.data.mensagem);
       onLoginSuccess(); // Entra no painel se tudo estiver certo
     } catch (err) {
