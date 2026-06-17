@@ -72,7 +72,7 @@ function App() {
         <hr className="sidebar-divider" />
 
         <div className="sidebar-nav-item">
-          📅 Dashboard
+          Dashboard
         </div>
 
         <div className="sidebar-footer">
@@ -145,7 +145,7 @@ function App() {
         </div>
 
         {/* ── MEUS SERVIÇOS ─────────────────────────────── */}
-        <h3 className="section-title">💄 Meus Serviços</h3>
+        <h3 className="section-title">Meus Serviços</h3>
 
         <div className="services-grid">
           {servicos.map((servico, index) => (
