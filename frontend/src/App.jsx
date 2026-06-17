@@ -23,3 +23,5 @@ const handleNovoAgendamento = async (e) => {
       alert('Ocorreu um erro ao salvar o agendamento no servidor.');
     }
   };
+
+  export default App;
